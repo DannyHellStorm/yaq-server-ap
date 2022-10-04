@@ -2,6 +2,7 @@ import config from 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
+import cookieParser from 'cookie-parser';
 
 import * as mapping from './models/mapping.js';
 import sequelize from './sequelize.js';
@@ -17,6 +18,8 @@ app.use(cors());
 app.use(express.json());
 // middleware для статики (img, css)
 app.use(express.static('static'));
+// cookie для корзины
+app.use(cookieParser(process.env.SECRET_KEY));
 // middleware для загрузки файлов
 app.use(fileUpload());
 // все маршруты приложения
