@@ -14,6 +14,14 @@ class User {
     return user;
   }
 
+  async getByEmail(email) {
+    const user = await UserMapping.findByPk(id);
+    if (!user) {
+      throw new Error('Пользователь не найден в БД');
+    }
+    return user;
+  }
+
   async create(data) {
     const { email, password, role } = data;
     const user = await UserMapping.create({ email, password, role });
