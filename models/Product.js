@@ -3,7 +3,10 @@ import {
   ProductProp as ProductPropMapping,
 } from './mapping.js';
 import FileService from '../services/File.js';
+import Sequelize from 'sequelize';
 import AppError from '../errors/AppError.js';
+
+const op = Sequelize.Op;
 
 class Product {
   async getAll(options) {
@@ -33,6 +36,23 @@ class Product {
       throw new Error('Товар не найден в БД');
     }
     return product;
+  }
+
+  async search(key) {
+    const result = await ProductMapping.findAll({
+      order: [['id', 'ASC']],
+      where: {
+        name: {
+          [op.iLike]: '%' + key + '%',
+        },
+      },
+    });
+
+    if (!result) {
+      throw new Error('Товар не найден в БД');
+    }
+
+    return result;
   }
 
   async create(data, img) {
