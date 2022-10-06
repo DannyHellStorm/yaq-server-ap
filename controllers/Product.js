@@ -39,6 +39,16 @@ class Product {
     }
   }
 
+  async searchProduct(req, res, next) {
+    try {
+      const { key } = req.params;
+      const result = await ProductModel.search(key);
+      res.json(result);
+    } catch (e) {
+      next(AppError.badRequest(e.message));
+    }
+  }
+
   /*
   method: POST
   desc: create product

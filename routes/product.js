@@ -16,6 +16,8 @@ router.get('/getall/categoryId/:categoryId([0-9]+)', ProductController.getAll);
 // список товаров выбранного бренда
 router.get('/getall/brandId/:brandId([0-9]+)', ProductController.getAll);
 
+router.get('/search/:key', ProductController.searchProduct);
+
 router.get('/getall', ProductController.getAll);
 router.get('/getone/:id([0-9]+)', ProductController.getOne);
 router.post(
