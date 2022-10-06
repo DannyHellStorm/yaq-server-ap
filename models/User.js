@@ -15,7 +15,7 @@ class User {
   }
 
   async getByEmail(email) {
-    const user = await UserMapping.findByPk(id);
+    const user = await UserMapping.findOne({ where: { email } });
     if (!user) {
       throw new Error('Пользователь не найден в БД');
     }
@@ -23,8 +23,8 @@ class User {
   }
 
   async create(data) {
-    const { email, password, role } = data;
-    const user = await UserMapping.create({ email, password, role });
+    const { email, password, phone, role } = data;
+    const user = await UserMapping.create({ email, password, phone, role });
     return user;
   }
 
@@ -36,9 +36,10 @@ class User {
     const {
       email = user.email,
       password = user.password,
+      phone = user.phone,
       role = user.role,
     } = data;
-    await user.update({ email, password, role });
+    await user.update({ email, password, phone, role });
     return user;
   }
 

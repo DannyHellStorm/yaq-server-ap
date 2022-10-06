@@ -11,7 +11,7 @@ const makeJwt = (id, email, role) => {
 
 class User {
   async signup(req, res, next) {
-    const { email, password, role = 'USER' } = req.body;
+    const { email, password, phone, role = 'USER' } = req.body;
     try {
       if (!email || !password) {
         throw new Error('Пустой email или пароль');
@@ -22,7 +22,12 @@ class User {
       }
 
       const hash = await bcrypt.hash(password, 5);
-      const user = await UserModel.create({ email, password: hash, role });
+      const user = await UserModel.create({
+        email,
+        password: hash,
+        phone,
+        role,
+      });
       const token = makeJwt(user.id, user.email, user.role);
       return res.json({ token });
     } catch (e) {
@@ -43,11 +48,6 @@ class User {
     } catch (e) {
       next(AppError.badRequest(e.message));
     }
-  }
-
-  async check(req, res, next) {
-    const token = makeJwt(req.auth.id, req.auth.email, req.auth.role);
-    return res.json({ token });
   }
 
   async getAll(req, res, next) {

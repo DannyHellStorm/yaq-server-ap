@@ -8,7 +8,6 @@ const router = new express.Router();
 router.post('/signup', UserController.signup);
 router.post('/login', UserController.login);
 
-router.get('/check', UserController.check);
 router.get('/getall', UserController.getAll);
 router.get('/getone/:id([0-9]+)', UserController.getOne);
 router.post('/create', authMiddleware, adminMiddleware, UserController.create);
