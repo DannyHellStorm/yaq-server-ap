@@ -52,6 +52,26 @@ const ProductProp = sequelize.define('product_prop', {
   value: { type: DataTypes.STRING, allowNull: false },
 });
 
+const Wishlist = sequelize.define('wishlist', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+});
+
+const WishlistProduct = sequelize.define('wishlist_product', {});
+
+Wishlist.belongsToMany(Product, {
+  through: WishlistProduct,
+  onDelete: 'CASCADE',
+});
+Product.belongsToMany(Wishlist, {
+  through: WishlistProduct,
+  onDelete: 'CASCADE',
+});
+
+Wishlist.hasMany(WishlistProduct);
+WishlistProduct.belongsTo(Wishlist);
+Product.hasMany(WishlistProduct);
+WishlistProduct.belongsTo(Product);
+
 Basket.belongsToMany(Product, { through: BasketProduct, onDelete: 'CASCADE' });
 Product.belongsToMany(Basket, { through: BasketProduct, onDelete: 'CASCADE' });
 
@@ -69,4 +89,14 @@ Product.belongsTo(Brand);
 Product.hasMany(ProductProp, { as: 'props', onDelete: 'CASCADE' });
 ProductProp.belongsTo(Product);
 
-export { User, Basket, Product, Category, Brand, BasketProduct, ProductProp };
+export {
+  User,
+  Basket,
+  Product,
+  Category,
+  Brand,
+  BasketProduct,
+  ProductProp,
+  Wishlist,
+  WishlistProduct,
+};
