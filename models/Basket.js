@@ -8,7 +8,7 @@ const basketDTO = (basket) => {
   data.id = basket.id;
   data.products = [];
   if (basket.products) {
-    data.products = data.products.map((item) => {
+    data.products = basket.products.map((item) => {
       return {
         id: item.id,
         name: item.name,
