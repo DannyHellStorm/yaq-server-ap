@@ -6,7 +6,6 @@ import adminMiddleware from '../middleware/adminMiddleware.js';
 const router = new express.Router();
 
 router.get('/getall', CategoryController.getAll);
-router.get('/getone/:id([0-9]+)', CategoryController.getOne);
 router.post(
   '/create',
   authMiddleware,
