@@ -1,5 +1,6 @@
 import CategoryModel from '../models/Category.js';
 import AppError from '../errors/AppError.js';
+import pkg from 'slugify';
 
 class Category {
   /*
@@ -16,29 +17,21 @@ class Category {
   }
 
   /*
-  method: GET
-  desc: get one category
-  */
-  async getOne(req, res, next) {
-    const { id } = req.params;
-    try {
-      if (!id) {
-        throw new Error('Не указан id категории');
-      }
-      const category = await CategoryModel.getOne(id);
-      res.json(category);
-    } catch (e) {
-      next(AppError.badRequest(e.message));
-    }
-  }
-
-  /*
   method: POST
   desc: create category
   */
   async create(req, res, next) {
     try {
-      const category = await CategoryModel.create(req.body);
+      const categoryObj = {
+        name: req.body.name,
+        slug: pkg(req.body.name),
+      };
+
+      if (req.body.parentId) {
+        categoryObj.parentId = req.body.parentId;
+      }
+
+      const category = await CategoryModel.create(categoryObj);
       res.json(category);
     } catch (e) {
       next(AppError.badRequest(e.message));
@@ -50,12 +43,26 @@ class Category {
   desc: update category
   */
   async update(req, res, next) {
-    const { id } = req.params;
     try {
+      const { id } = req.params;
+
       if (!id) {
         throw new Error('Не указан id категории');
       }
-      const category = await CategoryModel.update(id, req.body);
+
+      const categoryObj = {
+        name: req.body.name,
+      };
+
+      if (req.body.parentId) {
+        categoryObj.parentId = req.body.parentId;
+      }
+
+      if (req.body.name) {
+        categoryObj.slug = pkg(req.body.name);
+      }
+
+      const category = await CategoryModel.update(id, categoryObj);
       res.json(category);
     } catch (e) {
       next(AppError.badRequest(e.message));
@@ -72,7 +79,7 @@ class Category {
       if (!id) {
         throw new Error('Не указан id категории');
       }
-      const category = await CategoryModel.delete(req.params.id);
+      const category = await CategoryModel.delete(id);
       res.json(category);
     } catch (e) {
       next(AppError.badRequest(e.message));
