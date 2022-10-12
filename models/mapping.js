@@ -58,6 +58,48 @@ const Wishlist = sequelize.define('wishlist', {
 
 const WishlistProduct = sequelize.define('wishlist_product', {});
 
+const Order = sequelize.define('order', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  name: { type: DataTypes.STRING, allowNull: false },
+  email: { type: DataTypes.STRING, allowNull: false },
+  phone: { type: DataTypes.STRING, allowNull: false },
+  address: { type: DataTypes.STRING, allowNull: false },
+  amount: { type: DataTypes.INTEGER, allowNull: false },
+  status: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+  comment: { type: DataTypes.STRING },
+  prettyCreatedAt: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      const value = this.getDataValue('createdAt');
+      const day = value.getDate();
+      const month = value.getMonth() + 1;
+      const year = value.getFullYear();
+      const hours = value.getHours();
+      const minutes = value.getMinutes();
+      return day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
+    },
+  },
+  prettyUpdatedAt: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      const value = this.getDataValue('updatedAt');
+      const day = value.getDate();
+      const month = value.getMonth() + 1;
+      const year = value.getFullYear();
+      const hours = value.getHours();
+      const minutes = value.getMinutes();
+      return day + '.' + month + '.' + year + ' ' + hours + ':' + minutes;
+    },
+  },
+});
+
+const OrderItem = sequelize.define('order_item', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  name: { type: DataTypes.STRING, allowNull: false },
+  price: { type: DataTypes.INTEGER, allowNull: false },
+  quantity: { type: DataTypes.INTEGER, allowNull: false },
+});
+
 Wishlist.belongsToMany(Product, {
   through: WishlistProduct,
   onDelete: 'CASCADE',
@@ -89,6 +131,12 @@ Product.belongsTo(Brand);
 Product.hasMany(ProductProp, { as: 'props', onDelete: 'CASCADE' });
 ProductProp.belongsTo(Product);
 
+Order.hasMany(OrderItem, { as: 'items', onDelete: 'CASCADE' });
+OrderItem.belongsTo(Order);
+
+User.hasMany(Order, { as: 'orders', onDelete: 'SET NULL' });
+Order.belongsTo(User);
+
 export {
   User,
   Basket,
@@ -99,4 +147,6 @@ export {
   ProductProp,
   Wishlist,
   WishlistProduct,
+  Order,
+  OrderItem,
 };
