@@ -7,6 +7,8 @@ import user from './user.js';
 import basket from './basket.js';
 import wishlist from './Wishlist.js';
 import order from './order.js';
+import size from './size.js';
+import color from './color.js';
 
 const router = new express.Router();
 
@@ -17,5 +19,7 @@ router.use('/user', user);
 router.use('/basket', basket);
 router.use('/wishlist', wishlist);
 router.use('/order', order);
+router.use('/size', size);
+router.use('/color', color);
 
 export default router;

@@ -45,6 +45,18 @@ const Brand = sequelize.define('brand', {
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
 
+// модель «Размер», таблица БД «size»
+const Size = sequelize.define('size', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+  name: { type: DataTypes.STRING, unique: true, allowNull: false },
+});
+
+// модель «Цвет», таблица БД «color»
+const Color = sequelize.define('color', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+  name: { type: DataTypes.STRING, unique: true, allowNull: false},
+})
+
 // свойства товара, у одного товара может быть много свойств
 const ProductProp = sequelize.define('product_prop', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -128,6 +140,12 @@ Product.belongsTo(Category);
 Brand.hasMany(Product, { onDelete: 'RESTRICT' });
 Product.belongsTo(Brand);
 
+Size.hasMany(Product, { onDelete: 'RESTRICT'});
+Product.belongsTo(Brand);
+
+Color.hasMany(Product, { onDelete: 'RESTRICT'});
+Product.belongsTo(Color);
+
 Product.hasMany(ProductProp, { as: 'props', onDelete: 'CASCADE' });
 ProductProp.belongsTo(Product);
 
@@ -143,6 +161,8 @@ export {
   Product,
   Category,
   Brand,
+  Size,
+  Color,
   BasketProduct,
   ProductProp,
   Wishlist,
