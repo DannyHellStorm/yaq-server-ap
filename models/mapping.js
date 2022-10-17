@@ -24,12 +24,24 @@ const BasketProduct = sequelize.define('basket_product', {
 });
 
 // модель «Товар», таблица БД «products»
-const Product = sequelize.define('product', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, unique: true, allowNull: false },
-  price: { type: DataTypes.INTEGER, allowNull: false },
-  image: { type: DataTypes.STRING, allowNull: false },
-});
+const Product = sequelize.define(
+  'product',
+  {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    name: { type: DataTypes.STRING, allowNull: false },
+    price: { type: DataTypes.INTEGER, allowNull: false },
+    image: { type: DataTypes.STRING, allowNull: false },
+  },
+  {
+    indexes: [
+      {
+        name: 'category_product_key',
+        unique: true,
+        fields: ['categoryId'],
+      },
+    ],
+  }
+);
 
 // модель «Категория», таблица БД «categories»
 const Category = sequelize.define('category', {
@@ -47,15 +59,15 @@ const Brand = sequelize.define('brand', {
 
 // модель «Размер», таблица БД «size»
 const Size = sequelize.define('size', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   name: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
 
 // модель «Цвет», таблица БД «color»
 const Color = sequelize.define('color', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-  name: { type: DataTypes.STRING, unique: true, allowNull: false},
-})
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  name: { type: DataTypes.STRING, unique: true, allowNull: false },
+});
 
 // свойства товара, у одного товара может быть много свойств
 const ProductProp = sequelize.define('product_prop', {
@@ -140,10 +152,10 @@ Product.belongsTo(Category);
 Brand.hasMany(Product, { onDelete: 'RESTRICT' });
 Product.belongsTo(Brand);
 
-Size.hasMany(Product, { onDelete: 'RESTRICT'});
-Product.belongsTo(Brand);
+Size.hasMany(Product, { onDelete: 'RESTRICT' });
+Product.belongsTo(Size);
 
-Color.hasMany(Product, { onDelete: 'RESTRICT'});
+Color.hasMany(Product, { onDelete: 'RESTRICT' });
 Product.belongsTo(Color);
 
 Product.hasMany(ProductProp, { as: 'props', onDelete: 'CASCADE' });

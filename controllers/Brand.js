@@ -55,7 +55,7 @@ class Brand {
       if (!req.params.id) {
         throw new Error('Не указан id бренда');
       }
-      
+
       const brand = await BrandModel.update(req.params.id, req.body);
       res.json(brand);
     } catch (e) {
@@ -72,7 +72,7 @@ class Brand {
       if (!req.params.id) {
         throw new Error('Не указан id бренда');
       }
-      
+
       const brand = await BrandModel.delete(req.params.id);
       res.json(brand);
     } catch (e) {
