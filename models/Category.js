@@ -27,14 +27,23 @@ function categoryDTO(categories, parentId = null) {
 
 class Category {
   async getAll() {
-    const categories = await CategoryMapping.findAll();
+    const categories = await CategoryMapping.findAll({
+      order: [['name', 'ASC']],
+    });
     return categoryDTO(categories);
   }
 
   async create(data) {
     const { name, slug, parentId } = data;
-    let category;
-    category = await CategoryMapping.create({ name, slug, parentId });
+    const exist = await CategoryMapping.findOne({
+      where: { name },
+    });
+
+    if (exist) {
+      throw new Error('Такая категория уже есть');
+    }
+
+    const category = await CategoryMapping.create({ name, slug, parentId });
     return category;
   }
 
