@@ -24,24 +24,38 @@ const BasketProduct = sequelize.define('basket_product', {
 });
 
 // модель «Товар», таблица БД «products»
-const Product = sequelize.define(
-  'product',
-  {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    name: { type: DataTypes.STRING, allowNull: false },
-    price: { type: DataTypes.INTEGER, allowNull: false },
-    image: { type: DataTypes.STRING, allowNull: false },
+const Product = sequelize.define('product', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
   },
-  {
-    indexes: [
-      {
-        name: 'category_product_key',
-        unique: true,
-        fields: ['categoryId'],
-      },
-    ],
-  }
-);
+  name: { type: DataTypes.STRING, allowNull: false, unique: true },
+  price: { type: DataTypes.INTEGER, allowNull: false },
+  image: { type: DataTypes.STRING, allowNull: false },
+  brandName: { type: DataTypes.STRING, allowNull: false },
+  colors: { type: DataTypes.STRING, allowNull: false },
+  sizes: { type: DataTypes.STRING, allowNull: false },
+  genderName: { type: DataTypes.STRING, allowNull: false },
+  subcategory: { type: DataTypes.STRING, allowNull: false },
+});
+
+// модель "Пол", таблица БД "genders"
+const Gender = sequelize.define('gender', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  name: { type: DataTypes.STRING, allowNull: false },
+});
+
+// модель "Продукт и наличие", таблица БД "stock_products"
+const StockProduct = sequelize.define('stock_product', {});
+
+// модель "Наличие товара", таблица БД "stock"
+const Stock = sequelize.define('stock', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  color: { type: DataTypes.STRING, allowNull: false },
+  size: { type: DataTypes.STRING, allowNull: false },
+  count: { type: DataTypes.INTEGER, allowNull: false },
+});
 
 // модель «Категория», таблица БД «categories»
 const Category = sequelize.define('category', {
@@ -149,15 +163,6 @@ BasketProduct.belongsTo(Product);
 Category.hasMany(Product, { onDelete: 'RESTRICT' });
 Product.belongsTo(Category);
 
-Brand.hasMany(Product, { onDelete: 'RESTRICT' });
-Product.belongsTo(Brand);
-
-Size.hasMany(Product, { onDelete: 'RESTRICT' });
-Product.belongsTo(Size);
-
-Color.hasMany(Product, { onDelete: 'RESTRICT' });
-Product.belongsTo(Color);
-
 Product.hasMany(ProductProp, { as: 'props', onDelete: 'CASCADE' });
 ProductProp.belongsTo(Product);
 
@@ -166,6 +171,15 @@ OrderItem.belongsTo(Order);
 
 User.hasMany(Order, { as: 'orders', onDelete: 'SET NULL' });
 Order.belongsTo(User);
+
+Stock.hasMany(StockProduct, { onDelete: 'RESTRICT' });
+StockProduct.belongsTo(Stock);
+
+Product.hasMany(StockProduct, { onDelete: 'RESTRICT' });
+StockProduct.belongsTo(Product);
+
+Gender.hasMany(Product, { onDelete: 'RESTRICT' });
+Product.belongsTo(Gender);
 
 export {
   User,
@@ -181,4 +195,7 @@ export {
   WishlistProduct,
   Order,
   OrderItem,
+  Gender,
+  StockProduct,
+  Stock,
 };

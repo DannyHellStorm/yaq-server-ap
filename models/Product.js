@@ -5,6 +5,8 @@ import {
   Category as CategoryMapping,
   Color as ColorMapping,
   Size as SizeMapping,
+  Stock as StockMapping,
+  StockProduct as StockProductMapping,
 } from './mapping.js';
 import FileService from '../services/File.js';
 import Sequelize from 'sequelize';
@@ -86,20 +88,26 @@ class Product {
     const {
       name,
       price,
+      genderName,
+      subcategory,
+      brandName,
+      colors,
+      sizes,
       categoryId = null,
-      brandId = null,
-      colorId = null,
-      sizeId = null,
+      genderId = null,
     } = data;
 
     const product = await ProductMapping.create({
       name,
       price,
       image,
+      brandName,
+      colors,
+      sizes,
+      genderName,
+      subcategory,
       categoryId,
-      brandId,
-      colorId,
-      sizeId,
+      genderId,
     });
 
     if (data.props) {
