@@ -8,6 +8,8 @@ import {
   Stock as StockMapping,
   StockProduct as StockProductMapping,
   SubCategory as SubCategoryMapping,
+  ProductVariations as ProductVariationsMapping,
+  ProductVarOptions as ProductVarOptionsMapping,
 } from './mapping.js';
 import FileService from '../services/File.js';
 import Sequelize from 'sequelize';
@@ -16,38 +18,75 @@ import pkg from 'slugify';
 const op = Sequelize.Op;
 
 class Product {
-  async getAll(options) {
-    const { categoryId, brandId, sizeId, colorId, limit, page } = options;
+  async getAllProducts(page, limit) {
     const offset = (page - 1) * limit;
-    const where = {};
 
-    if (categoryId) {
-      where.categoryId = categoryId;
-    }
-
-    if (brandId) {
-      where.brandId = brandId;
-    }
-
-    if (colorId) {
-      where.colorId = colorId;
-    }
-
-    if (sizeId) {
-      where.sizeId = sizeId;
-    }
     const products = await ProductMapping.findAndCountAll({
-      where,
       limit,
       offset,
       include: [
-        { model: BrandMapping, as: 'brand' },
-        { model: CategoryMapping, as: 'category' },
-        { model: ColorMapping, as: 'color' },
-        { model: SizeMapping, as: 'size' },
+        { model: CategoryMapping },
+        { model: SubCategoryMapping },
+        {
+          model: ProductVariationsMapping,
+          include: [
+            {
+              model: ProductVarOptionsMapping,
+            },
+          ],
+        },
+        { model: ProductPropMapping, as: 'props' },
       ],
-      order: [['name', 'ASC']],
     });
+
+    return products;
+  }
+
+  async getProductsByCategory(data) {
+    const { categoryId } = data;
+
+    const products = await ProductMapping.findAll({
+      where: {
+        categoryId,
+      },
+      include: [
+        {
+          model: ProductVariationsMapping,
+          include: [
+            {
+              model: ProductVarOptionsMapping,
+            },
+          ],
+        },
+        { model: SubCategoryMapping },
+        { model: CategoryMapping },
+      ],
+    });
+
+    return products;
+  }
+
+  async getProductsBySubCategory(data) {
+    const { subCategoryId } = data;
+
+    const products = await ProductMapping.findAll({
+      where: {
+        subCategoryId,
+      },
+      include: [
+        {
+          model: ProductVariationsMapping,
+          include: [
+            {
+              model: ProductVarOptionsMapping,
+            },
+          ],
+        },
+        { model: SubCategoryMapping },
+        { model: CategoryMapping },
+      ],
+    });
+
     return products;
   }
 

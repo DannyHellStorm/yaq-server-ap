@@ -7,15 +7,12 @@ import adminMiddleware from '../middleware/adminMiddleware.js';
 const router = new express.Router();
 
 // список товаров выбранной категории и выбранного бренда
-router.get(
-  '/getall/categoryId/:categoryId([0-9]+)/brandId/:brandId([0-9]+)/colorId/:colorId([0-9]+)/sizeId/:sizeId([0-9]+)',
-  ProductController.getAll
-);
 
-router.get('/getall/colorId/:colorId([0-9]+)', ProductController.getAll);
-router.get('/getall/sizeId/:sizeId([0-9]+)', ProductController.getAll);
-router.get('/getall/categoryId/:categoryId([0-9]+)', ProductController.getAll);
-router.get('/getall/brandId/:brandId([0-9]+)', ProductController.getAll);
+router.get('/getall/categoryId', ProductController.getAllProductsByCategory);
+router.get(
+  '/getall/subcategoryId',
+  ProductController.getAllProductsBySubCategory
+);
 
 router.get('/search/:key', ProductController.searchProduct);
 
