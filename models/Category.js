@@ -1,4 +1,8 @@
-import { Category as CategoryMapping } from './mapping.js';
+import {
+  Category as CategoryMapping,
+  Product as ProductMapping,
+  SubCategory as SubCategoryMapping,
+} from './mapping.js';
 import Sequelize from 'sequelize';
 const op = Sequelize.Op;
 
@@ -26,47 +30,130 @@ function categoryDTO(categories, parentId = null) {
 }
 
 class Category {
-  async getAll() {
-    const categories = await CategoryMapping.findAll({
-      order: [['name', 'ASC']],
+  async getAllCategoryAndSubCategory() {
+    const categories = await CategoryMapping.findAndCountAll({
+      order: [['categoryName', 'ASC']],
+      include: [
+        {
+          model: SubCategoryMapping,
+          attributes: ['id', 'subCategoryName'],
+          as: 'subCategories',
+        },
+      ],
     });
-    return categoryDTO(categories);
+
+    return categories;
   }
 
-  async create(data) {
-    const { name, slug, parentId } = data;
-    const exist = await CategoryMapping.findOne({
-      where: { name },
+  async getOneCategory(id) {
+    const category = await CategoryMapping.findOne({
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: SubCategoryMapping,
+          attributes: ['id', 'subCategoryName'],
+          as: 'subCategories',
+        },
+      ],
     });
 
-    if (exist) {
+    return category;
+  }
+
+  async createCategory(categoryData) {
+    const { categoryName } = categoryData;
+
+    const existCat = await CategoryMapping.findOne({
+      where: { categoryName },
+    });
+
+    if (existCat) {
       throw new Error('Такая категория уже есть');
     }
 
-    const category = await CategoryMapping.create({ name, slug, parentId });
+    const category = await CategoryMapping.create({ categoryName });
+
     return category;
   }
 
-  async update(id, data) {
+  async updateCategory(id, data) {
     const category = await CategoryMapping.findByPk(id);
+
     if (!category) {
       throw new Error('Категория не найдена в БД');
     }
-    const { name = category.name } = data;
-    const { slug = category.slug } = data;
-    const { parentId = category.parentId } = data;
-    await category.update({ name, slug, parentId });
+    const { categoryName = category.categoryName } = data;
+    await category.update({ categoryName });
     return category;
   }
 
-  async delete(id) {
+  async deleteCategory(id) {
     const category = await CategoryMapping.findByPk(id);
+
     if (!category) {
       throw new Error('Категория не найдена в БД');
     }
 
     await category.destroy();
     return category;
+  }
+
+  async createSubCategory(subCategoryData) {
+    const { subCategoryName, categoryId } = subCategoryData;
+    const existSubCat = await SubCategoryMapping.findOne({
+      where: { subCategoryName },
+    });
+
+    if (existSubCat) {
+      throw new Error('Такая суб-категория уже есть');
+    }
+
+    await SubCategoryMapping.create({
+      subCategoryName,
+      CategoryId: categoryId,
+    });
+
+    const result = await CategoryMapping.findOne({
+      where: {
+        id: categoryId,
+      },
+      include: [
+        {
+          model: SubCategoryMapping,
+          attributes: ['id', 'subCategoryName'],
+          as: 'subCategories',
+        },
+      ],
+    });
+
+    return result;
+  }
+
+  async updateSubCategory(id, data) {
+    const subCategory = await SubCategoryMapping.findByPk(id);
+
+    if (!subCategory) {
+      throw new Error('Суб-категория не найдена в БД');
+    }
+
+    const { subCategoryName = subCategory.subCategoryName } = data;
+    const { CategoryId = subCategory.CategoryId } = data;
+
+    await subCategory.update({ subCategoryName, CategoryId });
+    return subCategory;
+  }
+
+  async deleteSubCategory(id) {
+    const subCategory = await SubCategoryMapping.findByPk(id);
+
+    if (!subCategory) {
+      throw new Error('Суб-категория не найдена в БД');
+    }
+
+    await subCategory.destroy();
+    return subCategory;
   }
 }
 
