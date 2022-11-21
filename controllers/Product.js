@@ -9,24 +9,34 @@ class Product {
   async getAll(req, res, next) {
     try {
       let { limit, page } = req.query;
-      const {
-        categoryId = null,
-        brandId = null,
-        sizeId = null,
-        colorId = null,
-      } = req.params;
 
       limit =
         limit && /[0-9]+/.test(limit) && parseInt(limit) ? parseInt(limit) : 9;
       page = page && /[0-9]+/.test(page) && parseInt(page) ? parseInt(page) : 1;
-      const options = { categoryId, brandId, sizeId, colorId, limit, page };
-      const products = await ProductModel.getAll(options);
+      const products = await ProductModel.getAllProducts(limit, page);
       res.json(products);
     } catch (e) {
       next(AppError.badRequest(e.message));
     }
   }
 
+  async getAllProductsByCategory(req, res, next) {
+    try {
+      const products = await ProductModel.getProductsByCategory(req.body);
+      res.json(products);
+    } catch (e) {
+      next(AppError.badRequest(e.message));
+    }
+  }
+
+  async getAllProductsBySubCategory(req, res, next) {
+    try {
+      const products = await ProductModel.getProductsBySubCategory(req.body);
+      res.json(products);
+    } catch (e) {
+      next(AppError.badRequest(e.message));
+    }
+  }
   /*
   method: GET
   desc: get one products

@@ -9,6 +9,7 @@ import wishlist from './Wishlist.js';
 import order from './order.js';
 import size from './size.js';
 import color from './color.js';
+import variation from './variation.js';
 
 const router = new express.Router();
 
@@ -21,5 +22,6 @@ router.use('/wishlist', wishlist);
 router.use('/order', order);
 router.use('/size', size);
 router.use('/color', color);
+router.use('/variation', variation);
 
 export default router;
