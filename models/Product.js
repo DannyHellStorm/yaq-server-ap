@@ -7,9 +7,11 @@ import {
   Size as SizeMapping,
   Stock as StockMapping,
   StockProduct as StockProductMapping,
+  SubCategory as SubCategoryMapping,
 } from './mapping.js';
 import FileService from '../services/File.js';
 import Sequelize from 'sequelize';
+import pkg from 'slugify';
 
 const op = Sequelize.Op;
 
@@ -86,28 +88,28 @@ class Product {
     // поскольку image не допускает null, задаем пустую строку
     const image = FileService.save(img) ?? '';
     const {
-      name,
-      price,
-      genderName,
-      subcategory,
-      brandName,
-      colors,
-      sizes,
-      categoryId = null,
-      genderId = null,
+      productName,
+      product_code,
+      subCategoryName,
+      categoryName,
+      CategoryId = null,
+      subCategoryId = null,
     } = data;
 
+    let productSlug;
+
+    if (productName) {
+      productSlug = pkg(productName);
+    }
+
     const product = await ProductMapping.create({
-      name,
-      price,
-      image,
-      brandName,
-      colors,
-      sizes,
-      genderName,
-      subcategory,
-      categoryId,
-      genderId,
+      productName,
+      productSlug,
+      product_code,
+      subCategoryName,
+      categoryName,
+      CategoryId,
+      subCategoryId,
     });
 
     if (data.props) {
@@ -121,9 +123,17 @@ class Product {
       }
     }
 
-    const created = await ProductMapping.findByPk(product.id, {
-      include: [{ model: ProductPropMapping, as: 'props' }],
+    const created = await ProductMapping.findOne({
+      where: {
+        id: product.id,
+        subCategoryId,
+      },
+      include: [
+        { model: ProductPropMapping, as: 'props' },
+        { model: SubCategoryMapping, as: 'subCategory' },
+      ],
     });
+
     return created;
   }
 
