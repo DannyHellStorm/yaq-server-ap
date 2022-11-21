@@ -5,24 +5,49 @@ import adminMiddleware from '../middleware/adminMiddleware.js';
 
 const router = new express.Router();
 
-router.get('/getall', CategoryController.getAll);
+router.get(
+  '/getall/category/subcategory',
+  CategoryController.getAllCatAndSubCat
+);
+router.get('/getone/category/:id([0-9]+)', CategoryController.getOneCategory);
+
 router.post(
-  '/create',
+  '/create/category',
   authMiddleware,
   adminMiddleware,
-  CategoryController.create
+  CategoryController.createCategory
 );
 router.put(
-  '/update/:id([0-9]+)',
+  '/update/category/:id([0-9]+)',
   authMiddleware,
   adminMiddleware,
-  CategoryController.update
+  CategoryController.updateCategory
 );
 router.delete(
-  '/delete/:id([0-9]+)',
+  '/delete/category/:id([0-9]+)',
   authMiddleware,
   adminMiddleware,
-  CategoryController.delete
+  CategoryController.deleteCategory
+);
+
+// Subcategory properties
+router.post(
+  '/create/subcategory',
+  authMiddleware,
+  adminMiddleware,
+  CategoryController.createSubCategory
+);
+router.put(
+  '/update/subcategory/:id([0-9]+)',
+  authMiddleware,
+  adminMiddleware,
+  CategoryController.updateSubCategory
+);
+router.delete(
+  '/delete/subcategory/:id([0-9]+)',
+  authMiddleware,
+  adminMiddleware,
+  CategoryController.deleteSubCategory
 );
 
 export default router;
