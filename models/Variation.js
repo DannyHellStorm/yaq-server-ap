@@ -18,13 +18,7 @@ class Variation {
           include: [
             {
               model: ProductVarOptionsMapping,
-              attributes: [
-                'id',
-                'optionName',
-                'optionImage',
-                'price',
-                'option_code',
-              ],
+              attributes: ['id', 'optionName', 'count'],
             },
           ],
         },
@@ -54,8 +48,8 @@ class Variation {
   }
 
   async createOption(productVariationId, productId, data, img) {
-    const optionImage = FileService.save(img) ?? '';
-    const { optionName, option_code, price = null } = data;
+    const optionName = FileService.save(img) ?? '';
+    const { count = null } = data;
 
     const exist = await ProductVariationsMapping.findOne({
       where: {
@@ -70,11 +64,10 @@ class Variation {
 
     const result = await ProductVarOptionsMapping.create({
       optionName,
-      optionImage,
-      option_code,
-      price,
+      count,
       productVariationId,
     });
+
     return result;
   }
 }
