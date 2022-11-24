@@ -1,6 +1,5 @@
 import CategoryModel from '../models/Category.js';
 import AppError from '../errors/AppError.js';
-import pkg from 'slugify';
 
 class Category {
   /*
@@ -60,11 +59,11 @@ class Category {
         throw new Error('Не указан id категории');
       }
 
-      const categoryObj = {
-        categoryName: req.body.categoryName,
-      };
+      if (Object.keys(req.body).length === 0) {
+        throw new Error('Нет данных для создания');
+      }
 
-      const category = await CategoryModel.updateCategory(id, categoryObj);
+      const category = await CategoryModel.updateCategory(id, req.body);
       res.json(category);
     } catch (e) {
       next(AppError.badRequest(e.message));
@@ -120,7 +119,7 @@ class Category {
 
       const subCategoryObj = {
         subCategoryName: req.body.subCategoryName,
-        CategoryId: req.body.categoryId,
+        categoryId: req.body.categoryId,
       };
 
       const subCategory = await CategoryModel.updateSubCategory(

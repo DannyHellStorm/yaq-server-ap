@@ -1,33 +1,8 @@
 import {
   Category as CategoryMapping,
-  Product as ProductMapping,
   SubCategory as SubCategoryMapping,
 } from './mapping.js';
-import Sequelize from 'sequelize';
-const op = Sequelize.Op;
-
-function categoryDTO(categories, parentId = null) {
-  const categoryList = [];
-  let category;
-  if (Array.isArray(categories)) {
-    if (parentId == null) {
-      category = categories.filter((cat) => cat.parentId == undefined);
-    } else {
-      category = categories.filter((cat) => cat.parentId == parentId);
-    }
-  }
-
-  for (let item of category) {
-    categoryList.push({
-      id: item.id,
-      name: item.name,
-      slug: item.slug,
-      children: categoryDTO(categories, item.id),
-    });
-  }
-
-  return categoryList;
-}
+import pkg from 'slugify';
 
 class Category {
   async getAllCategoryAndSubCategory() {
@@ -36,7 +11,7 @@ class Category {
       include: [
         {
           model: SubCategoryMapping,
-          attributes: ['id', 'subCategoryName'],
+          attributes: ['id', 'subCategoryName', 'subCategorySlug'],
           as: 'subCategories',
         },
       ],
@@ -53,7 +28,7 @@ class Category {
       include: [
         {
           model: SubCategoryMapping,
-          attributes: ['id', 'subCategoryName'],
+          attributes: ['id', 'subCategoryName', 'subCategorySlug'],
           as: 'subCategories',
         },
       ],
@@ -65,15 +40,16 @@ class Category {
   async createCategory(categoryData) {
     const { categoryName } = categoryData;
 
-    const existCat = await CategoryMapping.findOne({
-      where: { categoryName },
-    });
+    let categorySlug;
 
-    if (existCat) {
-      throw new Error('Такая категория уже есть');
+    if (categoryName) {
+      categorySlug = pkg(categoryName);
     }
 
-    const category = await CategoryMapping.create({ categoryName });
+    const category = await CategoryMapping.create({
+      categoryName,
+      categorySlug,
+    });
 
     return category;
   }
@@ -84,8 +60,16 @@ class Category {
     if (!category) {
       throw new Error('Категория не найдена в БД');
     }
+
     const { categoryName = category.categoryName } = data;
-    await category.update({ categoryName });
+
+    let categorySlug;
+
+    if (categoryName) {
+      categorySlug = pkg(categoryName);
+    }
+
+    await category.update({ categoryName, categorySlug });
     return category;
   }
 
@@ -110,9 +94,16 @@ class Category {
       throw new Error('Такая суб-категория уже есть');
     }
 
+    let subCategorySlug;
+
+    if (subCategoryName) {
+      subCategorySlug = pkg(subCategoryName);
+    }
+
     await SubCategoryMapping.create({
       subCategoryName,
-      CategoryId: categoryId,
+      categoryId,
+      subCategorySlug,
     });
 
     const result = await CategoryMapping.findOne({
@@ -122,7 +113,7 @@ class Category {
       include: [
         {
           model: SubCategoryMapping,
-          attributes: ['id', 'subCategoryName'],
+          attributes: ['id', 'subCategoryName', 'subCategorySlug'],
           as: 'subCategories',
         },
       ],
@@ -138,10 +129,19 @@ class Category {
       throw new Error('Суб-категория не найдена в БД');
     }
 
-    const { subCategoryName = subCategory.subCategoryName } = data;
-    const { CategoryId = subCategory.CategoryId } = data;
+    const {
+      subCategoryName = subCategory.subCategoryName,
+      categoryId = subCategory.categoryId,
+    } = data;
 
-    await subCategory.update({ subCategoryName, CategoryId });
+    let subCategorySlug;
+
+    if (subCategoryName) {
+      subCategorySlug = pkg(subCategoryName);
+    }
+
+    await subCategory.update({ subCategoryName, categoryId, subCategorySlug });
+
     return subCategory;
   }
 
