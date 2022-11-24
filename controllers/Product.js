@@ -22,7 +22,8 @@ class Product {
 
   async getAllProductsByCategory(req, res, next) {
     try {
-      const products = await ProductModel.getProductsByCategory(req.body);
+      const { categoryId } = req.body;
+      const products = await ProductModel.getProductsByCategory(categoryId);
       res.json(products);
     } catch (e) {
       next(AppError.badRequest(e.message));

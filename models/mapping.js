@@ -31,19 +31,22 @@ const Product = sequelize.define('product', {
   product_code: { type: DataTypes.STRING, allowNull: false, unique: true },
   categoryName: { type: DataTypes.STRING, allowNull: false },
   subCategoryName: { type: DataTypes.STRING, allowNull: false },
+  brandName: { type: DataTypes.STRING, allowNull: false },
+  genderName: { type: DataTypes.STRING, allowNull: false },
+  colorName: { type: DataTypes.STRING, allowNull: false },
 });
 
 // модель «Категория», таблица БД «categories»
-const Category = sequelize.define('Category', {
+const Category = sequelize.define('category', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   categoryName: { type: DataTypes.STRING, allowNull: false },
-  // categorySlug: { type: DataTypes.STRING, unique: true, allowNull: false },
+  categorySlug: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
 
 const SubCategory = sequelize.define('subCategory', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   subCategoryName: { type: DataTypes.STRING, allowNull: false, unique: true },
-  // subCategorySlug: { type: DataTypes.STRING, unique: true, allowNull: false },
+  subCategorySlug: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
 
 Category.hasMany(Product, { onDelete: 'RESTRICT' });
@@ -55,31 +58,31 @@ Product.belongsTo(SubCategory);
 Category.hasMany(SubCategory, { onDelete: 'RESTRICT' });
 SubCategory.belongsTo(Category);
 
-// // модель "Пол", таблица БД "genders"
-// const Gender = sequelize.define('gender', {
-//   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-//   name: { type: DataTypes.STRING, allowNull: false },
-// });
-
-// Gender.hasMany(Product, { onDelete: 'RESTRICT' });
-// Product.belongsTo(Gender);
-
-// модель "Продукт и наличие", таблица БД "stock_products"
-const StockProduct = sequelize.define('stock_product', {});
-
-// модель "Наличие товара", таблица БД "stock"
-const Stock = sequelize.define('stock', {
+// модель "Пол", таблица БД "genders"
+const Gender = sequelize.define('gender', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  color: { type: DataTypes.STRING, allowNull: false },
-  size: { type: DataTypes.STRING, allowNull: false },
-  count: { type: DataTypes.INTEGER, allowNull: false },
+  name: { type: DataTypes.STRING, allowNull: false },
 });
 
-Stock.hasMany(StockProduct, { onDelete: 'RESTRICT' });
-StockProduct.belongsTo(Stock);
+Gender.hasMany(Product, { onDelete: 'RESTRICT' });
+Product.belongsTo(Gender);
 
-Product.hasMany(StockProduct, { onDelete: 'RESTRICT' });
-StockProduct.belongsTo(Product);
+// // модель "Продукт и наличие", таблица БД "stock_products"
+// const StockProduct = sequelize.define('stock_product', {});
+
+// // модель "Наличие товара", таблица БД "stock"
+// const Stock = sequelize.define('stock', {
+//   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+//   color: { type: DataTypes.STRING, allowNull: false },
+//   size: { type: DataTypes.STRING, allowNull: false },
+//   count: { type: DataTypes.INTEGER, allowNull: false },
+// });
+
+// Stock.hasMany(StockProduct, { onDelete: 'RESTRICT' });
+// StockProduct.belongsTo(Stock);
+
+// Product.hasMany(StockProduct, { onDelete: 'RESTRICT' });
+// StockProduct.belongsTo(Product);
 
 const ProductVariations = sequelize.define('product_variations', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -92,9 +95,7 @@ ProductVariations.belongsTo(Product);
 const ProductVarOptions = sequelize.define('prod_var_options', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   optionName: { type: DataTypes.STRING, allowNull: false },
-  optionImage: { type: DataTypes.STRING, allowNull: false },
-  option_code: { type: DataTypes.STRING, allowNull: false, unique: true },
-  price: { type: DataTypes.INTEGER },
+  count: { type: DataTypes.INTEGER },
 });
 
 ProductVariations.hasMany(ProductVarOptions, { onDelete: 'RESTRICT' });
@@ -103,8 +104,11 @@ ProductVarOptions.belongsTo(ProductVariations);
 // модель «Бренд», таблица БД «brands»
 const Brand = sequelize.define('brand', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, unique: true, allowNull: false },
+  brandName: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
+
+Brand.hasMany(Product, { onDelete: 'RESTRICT' });
+Product.belongsTo(Brand);
 
 // модель «Размер», таблица БД «size»
 const Size = sequelize.define('size', {
@@ -218,9 +222,9 @@ export {
   WishlistProduct,
   Order,
   OrderItem,
-  // Gender,
-  StockProduct,
-  Stock,
+  Gender,
+  // StockProduct,
+  // Stock,
   SubCategory,
   ProductVariations,
   ProductVarOptions,
