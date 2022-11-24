@@ -8,6 +8,7 @@ import {
   SubCategory as SubCategoryMapping,
   ProductVariations as ProductVariationsMapping,
   ProductVarOptions as ProductVarOptionsMapping,
+  Gender as GenderMapping,
 } from './mapping.js';
 import FileService from '../services/File.js';
 import Sequelize from 'sequelize';
@@ -119,16 +120,16 @@ class Product {
     return result;
   }
 
-  async create(data, img) {
-    // поскольку image не допускает null, задаем пустую строку
-    const image = FileService.save(img) ?? '';
+  async create(data) {
     const {
       productName,
       product_code,
-      subCategoryName,
-      categoryName,
-      CategoryId = null,
+      categoryId = null,
       subCategoryId = null,
+      brandId = null,
+      genderId = null,
+      colorId = null,
+      price,
     } = data;
 
     let productSlug;
@@ -137,14 +138,40 @@ class Product {
       productSlug = pkg(productName);
     }
 
+    let genderName = await GenderMapping.findByPk({
+      id: genderId,
+    });
+
+    let brandName = await BrandMapping.findByPk({
+      id: brandId,
+    });
+
+    let colorName = await ColorMapping.findByPk({
+      id: colorId,
+    });
+
+    let categoryName = await CategoryMapping.findByPk({
+      id: categoryId,
+    });
+
+    let subCategoryName = await SubCategoryMapping.findByPk({
+      id: subCategoryId,
+    });
+
     const product = await ProductMapping.create({
       productName,
       productSlug,
       product_code,
       subCategoryName,
       categoryName,
-      CategoryId,
+      categoryId,
       subCategoryId,
+      brandId,
+      colorId,
+      brandName,
+      genderName,
+      colorName,
+      price,
     });
 
     if (data.props) {
@@ -161,12 +188,8 @@ class Product {
     const created = await ProductMapping.findOne({
       where: {
         id: product.id,
-        subCategoryId,
       },
-      include: [
-        { model: ProductPropMapping, as: 'props' },
-        { model: SubCategoryMapping, as: 'subCategory' },
-      ],
+      include: [{ model: ProductPropMapping, as: 'props' }],
     });
 
     return created;
