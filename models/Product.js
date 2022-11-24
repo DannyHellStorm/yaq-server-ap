@@ -5,8 +5,6 @@ import {
   Category as CategoryMapping,
   Color as ColorMapping,
   Size as SizeMapping,
-  Stock as StockMapping,
-  StockProduct as StockProductMapping,
   SubCategory as SubCategoryMapping,
   ProductVariations as ProductVariationsMapping,
   ProductVarOptions as ProductVarOptionsMapping,
@@ -42,9 +40,7 @@ class Product {
     return products;
   }
 
-  async getProductsByCategory(data) {
-    const { categoryId } = data;
-
+  async getProductsByCategory(categoryId) {
     const products = await ProductMapping.findAll({
       where: {
         categoryId,

@@ -8,9 +8,9 @@ const router = new express.Router();
 
 // список товаров выбранной категории и выбранного бренда
 
-router.get('/getall/categoryId', ProductController.getAllProductsByCategory);
+router.get('/getall/category', ProductController.getAllProductsByCategory);
 router.get(
-  '/getall/subcategoryId',
+  '/getall/subcategory',
   ProductController.getAllProductsBySubCategory
 );
 
