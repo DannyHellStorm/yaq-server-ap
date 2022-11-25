@@ -30,35 +30,27 @@ class Product {
     } = data;
 
     const products = await ProductMapping.findAll({
+      limit,
+      offset,
       where: {
-        [op.or]: [
-          { subCategoryId },
-          { colorId },
-          { brandId },
-          { genderId },
-          {
-            price: {
-              [op.between]: [minPrice, maxPrice],
-            },
-          },
-        ],
-        // price: {
-        //   [op.between]: [minPrice, maxPrice],
-        // },
+        [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
+        price: {
+          [op.between]: [minPrice, maxPrice],
+        },
       },
-      // include: [
-      //   { model: CategoryMapping },
-      //   { model: SubCategoryMapping },
-      //   {
-      //     model: ProductVariationsMapping,
-      //     include: [
-      //       {
-      //         model: ProductVarOptionsMapping,
-      //       },
-      //     ],
-      //   },
-      //   { model: ProductPropMapping, as: 'props' },
-      // ],
+      include: [
+        { model: CategoryMapping },
+        { model: SubCategoryMapping },
+        {
+          model: ProductVariationsMapping,
+          include: [
+            {
+              model: ProductVarOptionsMapping,
+            },
+          ],
+        },
+        { model: ProductPropMapping, as: 'props' },
+      ],
     });
 
     return products;
