@@ -6,18 +6,15 @@ import adminMiddleware from '../middleware/adminMiddleware.js';
 
 const router = new express.Router();
 
-// список товаров выбранной категории и выбранного бренда
-
 router.get('/getall/category', ProductController.getAllProductsByCategory);
 router.get(
   '/getall/subcategory',
   ProductController.getAllProductsBySubCategory
 );
 router.get('/getall/productname', ProductController.getAllProductsByName);
+router.get('/getall/filter', ProductController.getAllProductsByFilter);
 
 router.get('/search/:key', ProductController.searchProduct);
-
-router.get('/getall', ProductController.getAll);
 router.get('/getone/:id([0-9]+)', ProductController.getOne);
 router.post(
   '/create',
