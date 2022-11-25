@@ -41,11 +41,17 @@ class Product {
     return products;
   }
 
-  async getProductsByCategory(categoryId) {
+  async getProductsByCategory(data) {
+    const { categoryId } = data;
+
+    let where = {};
+
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+
     const products = await ProductMapping.findAll({
-      where: {
-        categoryId,
-      },
+      where,
       include: [
         {
           model: ProductVariationsMapping,
@@ -66,10 +72,40 @@ class Product {
   async getProductsBySubCategory(data) {
     const { subCategoryId } = data;
 
+    let where = {};
+
+    if (subCategoryId) {
+      where.subCategoryId = subCategoryId;
+    }
+
     const products = await ProductMapping.findAll({
-      where: {
-        subCategoryId,
-      },
+      where,
+      include: [
+        {
+          model: ProductVariationsMapping,
+          include: [
+            {
+              model: ProductVarOptionsMapping,
+            },
+          ],
+        },
+        { model: SubCategoryMapping },
+        { model: CategoryMapping },
+      ],
+    });
+
+    return products;
+  }
+
+  async getProductsByName(productName) {
+    let where = {};
+
+    if (productName) {
+      where.productName = productName;
+    }
+
+    const products = await ProductMapping.findAll({
+      where,
       include: [
         {
           model: ProductVariationsMapping,
@@ -138,39 +174,40 @@ class Product {
       productSlug = pkg(productName);
     }
 
-    let genderName = await GenderMapping.findByPk({
-      id: genderId,
+    let gender = await GenderMapping.findOne({
+      where: { id: genderId },
     });
 
-    let brandName = await BrandMapping.findByPk({
-      id: brandId,
+    let brand = await BrandMapping.findOne({
+      where: { id: brandId },
     });
 
-    let colorName = await ColorMapping.findByPk({
-      id: colorId,
+    let color = await ColorMapping.findOne({
+      where: { id: colorId },
     });
 
-    let categoryName = await CategoryMapping.findByPk({
-      id: categoryId,
+    let category = await CategoryMapping.findOne({
+      where: { id: categoryId },
     });
 
-    let subCategoryName = await SubCategoryMapping.findByPk({
-      id: subCategoryId,
+    let subCategory = await SubCategoryMapping.findOne({
+      where: { id: subCategoryId },
     });
 
     const product = await ProductMapping.create({
       productName,
       productSlug,
       product_code,
-      subCategoryName,
-      categoryName,
+      subCategoryName: subCategory.subCategoryName,
+      categoryName: category.categoryName,
       categoryId,
       subCategoryId,
       brandId,
       colorId,
-      brandName,
-      genderName,
-      colorName,
+      genderId,
+      brandName: brand.brandName,
+      genderName: gender.genderName,
+      colorName: color.colorName,
       price,
     });
 

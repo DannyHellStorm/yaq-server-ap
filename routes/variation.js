@@ -9,30 +9,45 @@ router.get(
   '/getall/product/:productId([0-9]+)',
   VariationController.getAllVariation
 );
-// router.get('/getone/:id([0-9]+)', VariationController.getOne);
+
+// variation
 router.post(
   '/create/variation',
   // authMiddleware,
   // adminMiddleware,
   VariationController.createVariation
 );
+router.put(
+  '/update/variation/:id([0-9]+)',
+  // authMiddleware,
+  // adminMiddleware,
+  VariationController.updateVariation
+);
+router.delete(
+  'delete/variation/:id([0-9]+)',
+  // authMiddleware,
+  // adminMiddleware,
+  VariationController.deleteVariation
+);
+
+// option
 router.post(
-  '/create/variation/options',
+  '/create/options',
   // authMiddleware,
   // adminMiddleware,
   VariationController.createOptions
 );
-// router.put(
-//   '/update/:id([0-9]+)',
-//   authMiddleware,
-//   adminMiddleware,
-//   VariationController.update
-// );
-// router.delete(
-//   '/delete/:id([0-9]+)',
-//   authMiddleware,
-//   adminMiddleware,
-//   VariationController.delete
-// );
+router.put(
+  '/update/options/:id([0-9]+)',
+  // authMiddleware,
+  // adminMiddleware,
+  VariationController.updateOption
+);
+router.delete(
+  '/delete/options/:id([0-9]+)',
+  // authMiddleware,
+  // adminMiddleware,
+  VariationController.deleteOption
+);
 
 export default router;
