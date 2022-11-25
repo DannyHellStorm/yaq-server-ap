@@ -16,8 +16,8 @@ class Brand {
   }
 
   async create(data) {
-    const { name } = data;
-    const brand = await BrandMapping.create({ name });
+    const { brandName } = data;
+    const brand = await BrandMapping.create({ brandName });
     return brand;
   }
 
@@ -26,8 +26,8 @@ class Brand {
     if (!brand) {
       throw new Error('Бренд не найден в БД');
     }
-    const { name = brand.name } = data;
-    await brand.update({ name });
+    const { brandName = brand.brandName } = data;
+    await brand.update({ brandName });
     return brand;
   }
 

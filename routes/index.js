@@ -10,6 +10,7 @@ import order from './order.js';
 import size from './size.js';
 import color from './color.js';
 import variation from './variation.js';
+import gender from './gender.js';
 
 const router = new express.Router();
 
@@ -23,5 +24,6 @@ router.use('/order', order);
 router.use('/size', size);
 router.use('/color', color);
 router.use('/variation', variation);
+router.use('/gender', gender);
 
 export default router;
