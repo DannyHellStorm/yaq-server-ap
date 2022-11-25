@@ -27,41 +27,147 @@ class Product {
       colorId = null,
       brandId = null,
       genderId = null,
+      sortByMaxPrice,
+      sortByNewDate,
+      sortBySale,
     } = data;
 
-    const products = await ProductMapping.findAll({
-      where: {
-        [op.or]: [
-          { subCategoryId },
-          { colorId },
-          { brandId },
-          { genderId },
-          {
-            price: {
-              [op.between]: [minPrice, maxPrice],
-            },
+    if (sortByMaxPrice === false) {
+      const products = await ProductMapping.findAll({
+        // limit,
+        // offset,
+        where: {
+          [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
+          price: {
+            [op.between]: [minPrice, maxPrice],
           },
+        },
+        include: [
+          { model: CategoryMapping },
+          { model: SubCategoryMapping },
+          {
+            model: ProductVariationsMapping,
+            include: [
+              {
+                model: ProductVarOptionsMapping,
+              },
+            ],
+          },
+          { model: ProductPropMapping, as: 'props' },
         ],
-        // price: {
-        //   [op.between]: [minPrice, maxPrice],
-        // },
-      },
-      // include: [
-      //   { model: CategoryMapping },
-      //   { model: SubCategoryMapping },
-      //   {
-      //     model: ProductVariationsMapping,
-      //     include: [
-      //       {
-      //         model: ProductVarOptionsMapping,
-      //       },
-      //     ],
-      //   },
-      //   { model: ProductPropMapping, as: 'props' },
-      // ],
-    });
+        order: [['price', 'ASC']],
+      });
 
-    return products;
+      return products;
+    } else if (sortByMaxPrice === true) {
+      const products = await ProductMapping.findAll({
+        // limit,
+        // offset,
+        where: {
+          [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
+          price: {
+            [op.between]: [minPrice, maxPrice],
+          },
+        },
+        include: [
+          { model: CategoryMapping },
+          { model: SubCategoryMapping },
+          {
+            model: ProductVariationsMapping,
+            include: [
+              {
+                model: ProductVarOptionsMapping,
+              },
+            ],
+          },
+          { model: ProductPropMapping, as: 'props' },
+        ],
+        order: [['price', 'DESC']],
+      });
+
+      return products;
+    } else if (sortByNewDate === true) {
+      const products = await ProductMapping.findAll({
+        // limit,
+        // offset,
+        where: {
+          [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
+          price: {
+            [op.between]: [minPrice, maxPrice],
+          },
+        },
+        include: [
+          { model: CategoryMapping },
+          { model: SubCategoryMapping },
+          {
+            model: ProductVariationsMapping,
+            include: [
+              {
+                model: ProductVarOptionsMapping,
+              },
+            ],
+          },
+          { model: ProductPropMapping, as: 'props' },
+        ],
+        order: [['updatedAt', 'DESC']],
+      });
+
+      return products;
+    } else if (sortBySale === true) {
+      const products = await ProductMapping.findAll({
+        // limit,
+        // offset,
+        where: {
+          [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
+          price: {
+            [op.between]: [minPrice, maxPrice],
+          },
+          inSale: sortBySale,
+        },
+        include: [
+          { model: CategoryMapping },
+          { model: SubCategoryMapping },
+          {
+            model: ProductVariationsMapping,
+            include: [
+              {
+                model: ProductVarOptionsMapping,
+              },
+            ],
+          },
+          { model: ProductPropMapping, as: 'props' },
+        ],
+        order: [['updatedAt', 'DESC']],
+      });
+
+      return products;
+    } else {
+      const products = await ProductMapping.findAll({
+        // limit,
+        // offset,
+        where: {
+          [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
+          price: {
+            [op.between]: [minPrice, maxPrice],
+          },
+        },
+        include: [
+          { model: CategoryMapping },
+          { model: SubCategoryMapping },
+          {
+            model: ProductVariationsMapping,
+            include: [
+              {
+                model: ProductVarOptionsMapping,
+              },
+            ],
+          },
+          { model: ProductPropMapping, as: 'props' },
+        ],
+      });
+
+      return products;
+    }
   }
 
   async getProductsByCategory(data) {
