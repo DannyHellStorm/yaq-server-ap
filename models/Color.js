@@ -16,8 +16,8 @@ class Color {
   }
 
   async create(data) {
-    const { name } = data;
-    const color = await ColorMapping.create({ name });
+    const { colorName } = data;
+    const color = await ColorMapping.create({ colorName });
     return color;
   }
 
@@ -27,8 +27,8 @@ class Color {
       throw new Error('Цвет не найден в БД');
     }
 
-    const { name = color.name } = data;
-    await color.update({ name });
+    const { colorName = color.colorName } = data;
+    await color.update({ colorName });
     return color;
   }
 

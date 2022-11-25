@@ -15,6 +15,10 @@ class Category {
     }
   }
 
+  /*
+  method: GET
+  desc: get one category
+  */
   async getOneCategory(req, res, next) {
     try {
       const { id } = req.params;

@@ -61,7 +61,7 @@ SubCategory.belongsTo(Category);
 // модель "Пол", таблица БД "genders"
 const Gender = sequelize.define('gender', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, allowNull: false },
+  genderName: { type: DataTypes.STRING, allowNull: false },
 });
 
 Gender.hasMany(Product, { onDelete: 'RESTRICT' });
@@ -95,6 +95,7 @@ ProductVariations.belongsTo(Product);
 const ProductVarOptions = sequelize.define('prod_var_options', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   optionName: { type: DataTypes.STRING, allowNull: false },
+  optionImage: { type: DataTypes.STRING },
   count: { type: DataTypes.INTEGER },
 });
 
@@ -119,7 +120,7 @@ const Size = sequelize.define('size', {
 // модель «Цвет», таблица БД «color»
 const Color = sequelize.define('color', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  name: { type: DataTypes.STRING, unique: true, allowNull: false },
+  colorName: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
 
 // свойства товара, у одного товара может быть много свойств
