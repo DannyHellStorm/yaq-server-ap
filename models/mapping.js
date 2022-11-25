@@ -34,6 +34,7 @@ const Product = sequelize.define('product', {
   brandName: { type: DataTypes.STRING, allowNull: false },
   genderName: { type: DataTypes.STRING, allowNull: false },
   colorName: { type: DataTypes.STRING, allowNull: false },
+  price: { type: DataTypes.INTEGER, allowNull: false },
 });
 
 // модель «Категория», таблица БД «categories»
@@ -122,6 +123,9 @@ const Color = sequelize.define('color', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   colorName: { type: DataTypes.STRING, unique: true, allowNull: false },
 });
+
+Color.hasMany(Product, { onDelete: 'RESTRICT' });
+Product.belongsTo(Color);
 
 // свойства товара, у одного товара может быть много свойств
 const ProductProp = sequelize.define('product_prop', {
