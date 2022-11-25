@@ -17,25 +17,48 @@ import pkg from 'slugify';
 const op = Sequelize.Op;
 
 class Product {
-  async getAllProducts(page, limit) {
+  async getAllProductsByFilter(page, limit, data) {
     const offset = (page - 1) * limit;
 
-    const products = await ProductMapping.findAndCountAll({
-      limit,
-      offset,
-      include: [
-        { model: CategoryMapping },
-        { model: SubCategoryMapping },
-        {
-          model: ProductVariationsMapping,
-          include: [
-            {
-              model: ProductVarOptionsMapping,
+    const {
+      minPrice,
+      maxPrice,
+      subCategoryId = null,
+      colorId = null,
+      brandId = null,
+      genderId = null,
+    } = data;
+
+    const products = await ProductMapping.findAll({
+      where: {
+        [op.or]: [
+          { subCategoryId },
+          { colorId },
+          { brandId },
+          { genderId },
+          {
+            price: {
+              [op.between]: [minPrice, maxPrice],
             },
-          ],
-        },
-        { model: ProductPropMapping, as: 'props' },
-      ],
+          },
+        ],
+        // price: {
+        //   [op.between]: [minPrice, maxPrice],
+        // },
+      },
+      // include: [
+      //   { model: CategoryMapping },
+      //   { model: SubCategoryMapping },
+      //   {
+      //     model: ProductVariationsMapping,
+      //     include: [
+      //       {
+      //         model: ProductVarOptionsMapping,
+      //       },
+      //     ],
+      //   },
+      //   { model: ProductPropMapping, as: 'props' },
+      // ],
     });
 
     return products;

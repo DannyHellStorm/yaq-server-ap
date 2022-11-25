@@ -6,14 +6,19 @@ class Product {
   method: GET
   desc: get all products
   */
-  async getAll(req, res, next) {
+  async getAllProductsByFilter(req, res, next) {
     try {
       let { limit, page } = req.query;
 
       limit =
         limit && /[0-9]+/.test(limit) && parseInt(limit) ? parseInt(limit) : 9;
       page = page && /[0-9]+/.test(page) && parseInt(page) ? parseInt(page) : 1;
-      const products = await ProductModel.getAllProducts(limit, page);
+
+      const products = await ProductModel.getAllProductsByFilter(
+        limit,
+        page,
+        req.body
+      );
       res.json(products);
     } catch (e) {
       next(AppError.badRequest(e.message));
