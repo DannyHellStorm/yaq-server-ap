@@ -35,6 +35,8 @@ const Product = sequelize.define('product', {
   genderName: { type: DataTypes.STRING, allowNull: false },
   colorName: { type: DataTypes.STRING, allowNull: false },
   price: { type: DataTypes.INTEGER, allowNull: false },
+  inSale: { type: DataTypes.BOOLEAN },
+  salePrice: { type: DataTypes.INTEGER },
 });
 
 // модель «Категория», таблица БД «categories»
