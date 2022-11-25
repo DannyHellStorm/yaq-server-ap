@@ -18,7 +18,7 @@ class Variation {
           include: [
             {
               model: ProductVarOptionsMapping,
-              attributes: ['id', 'optionName', 'count'],
+              attributes: ['id', 'optionName', 'optionImage', 'count'],
             },
           ],
         },

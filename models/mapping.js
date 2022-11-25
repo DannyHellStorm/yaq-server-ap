@@ -27,7 +27,7 @@ const BasketProduct = sequelize.define('basket_product', {
 const Product = sequelize.define('product', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   productName: { type: DataTypes.STRING, allowNull: false },
-  productSlug: { type: DataTypes.STRING, allowNull: false, unique: true },
+  productSlug: { type: DataTypes.STRING, allowNull: false },
   product_code: { type: DataTypes.STRING, allowNull: false, unique: true },
   categoryName: { type: DataTypes.STRING, allowNull: false },
   subCategoryName: { type: DataTypes.STRING, allowNull: false },
@@ -95,7 +95,7 @@ ProductVariations.belongsTo(Product);
 
 const ProductVarOptions = sequelize.define('prod_var_options', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  optionName: { type: DataTypes.STRING, allowNull: false },
+  optionName: { type: DataTypes.STRING },
   optionImage: { type: DataTypes.STRING },
   count: { type: DataTypes.INTEGER },
 });

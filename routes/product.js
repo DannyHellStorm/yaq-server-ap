@@ -13,6 +13,7 @@ router.get(
   '/getall/subcategory',
   ProductController.getAllProductsBySubCategory
 );
+router.get('/getall/productname', ProductController.getAllProductsByName);
 
 router.get('/search/:key', ProductController.searchProduct);
 

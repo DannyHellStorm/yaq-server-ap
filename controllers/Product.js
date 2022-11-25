@@ -22,8 +22,7 @@ class Product {
 
   async getAllProductsByCategory(req, res, next) {
     try {
-      const { categoryId } = req.body;
-      const products = await ProductModel.getProductsByCategory(categoryId);
+      const products = await ProductModel.getProductsByCategory(req.body);
       res.json(products);
     } catch (e) {
       next(AppError.badRequest(e.message));
@@ -38,6 +37,18 @@ class Product {
       next(AppError.badRequest(e.message));
     }
   }
+
+  async getAllProductsByName(req, res, next) {
+    try {
+      const products = await ProductModel.getProductsByName(
+        req.body.productName
+      );
+      res.json(products);
+    } catch (e) {
+      next(AppError.badRequest(e.message));
+    }
+  }
+
   /*
   method: GET
   desc: get one products
