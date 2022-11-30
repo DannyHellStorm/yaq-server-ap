@@ -10,7 +10,6 @@ import {
   ProductVarOptions as ProductVarOptionsMapping,
   Gender as GenderMapping,
 } from './mapping.js';
-import FileService from '../services/File.js';
 import Sequelize from 'sequelize';
 import pkg from 'slugify';
 
@@ -246,11 +245,17 @@ class Product {
   async getOne(id) {
     const product = await ProductMapping.findByPk(id, {
       include: [
+        { model: CategoryMapping },
+        { model: SubCategoryMapping },
+        {
+          model: ProductVariationsMapping,
+          include: [
+            {
+              model: ProductVarOptionsMapping,
+            },
+          ],
+        },
         { model: ProductPropMapping, as: 'props' },
-        { model: BrandMapping, as: 'brand' },
-        { model: CategoryMapping, as: 'category' },
-        { model: ColorMapping, as: 'color' },
-        { model: SizeMapping, as: 'size' },
       ],
     });
     if (!product) {
@@ -263,10 +268,22 @@ class Product {
     const result = await ProductMapping.findAll({
       order: [['id', 'ASC']],
       where: {
-        name: {
+        productName: {
           [op.iLike]: '%' + key + '%',
         },
       },
+      include: [
+        {
+          model: ProductVariationsMapping,
+          include: [
+            {
+              model: ProductVarOptionsMapping,
+            },
+          ],
+        },
+        { model: SubCategoryMapping },
+        { model: CategoryMapping },
+      ],
     });
 
     if (!result) {
@@ -286,6 +303,8 @@ class Product {
       genderId = null,
       colorId = null,
       price,
+      inSale,
+      salePrice,
     } = data;
 
     let productSlug;
@@ -329,6 +348,8 @@ class Product {
       genderName: gender.genderName,
       colorName: color.colorName,
       price,
+      inSale,
+      salePrice,
     });
 
     if (data.props) {
@@ -346,45 +367,101 @@ class Product {
       where: {
         id: product.id,
       },
-      include: [{ model: ProductPropMapping, as: 'props' }],
+      include: [
+        { model: CategoryMapping },
+        { model: SubCategoryMapping },
+        {
+          model: ProductVariationsMapping,
+          include: [
+            {
+              model: ProductVarOptionsMapping,
+            },
+          ],
+        },
+        { model: ProductPropMapping, as: 'props' },
+      ],
     });
 
     return created;
   }
 
-  async update(id, data, img) {
+  async update(id, data) {
     const product = await ProductMapping.findByPk(id, {
-      include: [{ model: ProductPropMapping, as: 'props' }],
+      include: [
+        { model: CategoryMapping },
+        { model: SubCategoryMapping },
+        {
+          model: ProductVariationsMapping,
+          include: [
+            {
+              model: ProductVarOptionsMapping,
+            },
+          ],
+        },
+        { model: ProductPropMapping, as: 'props' },
+      ],
     });
 
     if (!product) {
       throw new Error('Товар не найден в БД');
     }
-    // пробуем сохранить изображение, если оно было загружено
-    const file = FileService.save(img);
-    // если загружено новое изображение — надо удалить старое
-    if (file && product.image) {
-      FileService.delete(product.image);
-    }
-    // подготавливаем данные, которые надо обновить в базе данных
+
     const {
-      name = product.name,
+      productName = product.productName,
       price = product.price,
       categoryId = product.categoryId,
+      subCategoryId = product.subCategoryId,
       brandId = product.brandId,
-      sizeId = product.sizeId,
+      genderId = product.genderId,
       colorId = product.colorId,
-      image = file ? file : product.image,
+      inSale = product.inSale,
+      salePrice = product.salePrice,
+      product_code = product.product_code,
     } = data;
 
+    let productSlug;
+
+    if (productName) {
+      productSlug = pkg(productName);
+    }
+
+    let gender = await GenderMapping.findOne({
+      where: { id: genderId },
+    });
+
+    let brand = await BrandMapping.findOne({
+      where: { id: brandId },
+    });
+
+    let color = await ColorMapping.findOne({
+      where: { id: colorId },
+    });
+
+    let category = await CategoryMapping.findOne({
+      where: { id: categoryId },
+    });
+
+    let subCategory = await SubCategoryMapping.findOne({
+      where: { id: subCategoryId },
+    });
+
     await product.update({
-      name,
+      productName,
+      productSlug,
+      product_code,
       price,
-      image,
+      inSale,
+      salePrice,
       categoryId,
+      categoryName: category.categoryName,
       brandId,
-      sizeId,
+      brandName: brand.brandName,
+      genderId,
+      genderName: gender.genderName,
       colorId,
+      colorName: color.colorName,
+      subCategoryId,
+      subCategoryName: subCategory.subCategoryName,
     });
 
     if (data.props) {
@@ -407,10 +484,6 @@ class Product {
     const product = await ProductMapping.findByPk(id);
     if (!product) {
       throw new Error('Товар не найден в БД');
-    }
-
-    if (product.image) {
-      FileService.delete(product.image);
     }
 
     await product.destroy();
