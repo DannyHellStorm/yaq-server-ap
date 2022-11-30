@@ -21,27 +21,33 @@ class Product {
     const offset = (page - 1) * limit;
 
     const {
-      minPrice,
-      maxPrice,
-      subCategoryId = null,
-      colorId = null,
-      brandId = null,
-      genderId = null,
+      price,
+      categoryId,
+      subCategoryId,
+      colorId,
+      brandId,
+      genderId,
       sortByMaxPrice,
       sortByNewDate,
       sortBySale,
     } = data;
 
+    const where = {};
+
+    if (categoryId) where.categoryId = categoryId;
+    if (subCategoryId) where.subCategoryId = subCategoryId;
+    if (colorId) where.colorId = colorId;
+    if (brandId) where.brandId = brandId;
+    if (genderId) where.genderId = genderId;
+    if (price) {
+      where.price = { [op.between]: price };
+    }
+
     if (sortByMaxPrice === false) {
       const products = await ProductMapping.findAll({
         // limit,
         // offset,
-        where: {
-          [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
-          price: {
-            [op.between]: [minPrice, maxPrice],
-          },
-        },
+        where,
         include: [
           { model: CategoryMapping },
           { model: SubCategoryMapping },
@@ -63,12 +69,7 @@ class Product {
       const products = await ProductMapping.findAll({
         // limit,
         // offset,
-        where: {
-          [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
-          price: {
-            [op.between]: [minPrice, maxPrice],
-          },
-        },
+        where,
         include: [
           { model: CategoryMapping },
           { model: SubCategoryMapping },
@@ -90,12 +91,7 @@ class Product {
       const products = await ProductMapping.findAll({
         // limit,
         // offset,
-        where: {
-          [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
-          price: {
-            [op.between]: [minPrice, maxPrice],
-          },
-        },
+        where,
         include: [
           { model: CategoryMapping },
           { model: SubCategoryMapping },
@@ -117,13 +113,7 @@ class Product {
       const products = await ProductMapping.findAll({
         // limit,
         // offset,
-        where: {
-          [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
-          price: {
-            [op.between]: [minPrice, maxPrice],
-          },
-          inSale: sortBySale,
-        },
+        where,
         include: [
           { model: CategoryMapping },
           { model: SubCategoryMapping },
@@ -145,12 +135,7 @@ class Product {
       const products = await ProductMapping.findAll({
         // limit,
         // offset,
-        where: {
-          [op.or]: [{ subCategoryId }, { colorId }, { brandId }, { genderId }],
-          price: {
-            [op.between]: [minPrice, maxPrice],
-          },
-        },
+        where,
         include: [
           { model: CategoryMapping },
           { model: SubCategoryMapping },
@@ -171,12 +156,18 @@ class Product {
   }
 
   async getProductsByCategory(data) {
-    const { categoryId } = data;
+    const { categoryId, categoryName, genderId } = data;
 
     let where = {};
 
     if (categoryId) {
       where.categoryId = categoryId;
+    }
+    if (categoryName) {
+      where.categoryName = categoryName;
+    }
+    if (genderId) {
+      where.genderId = genderId;
     }
 
     const products = await ProductMapping.findAll({

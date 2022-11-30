@@ -6,13 +6,13 @@ import adminMiddleware from '../middleware/adminMiddleware.js';
 
 const router = new express.Router();
 
-router.get('/getall/category', ProductController.getAllProductsByCategory);
-router.get(
+router.post('/getall/category', ProductController.getAllProductsByCategory);
+router.post(
   '/getall/subcategory',
   ProductController.getAllProductsBySubCategory
 );
-router.get('/getall/productname', ProductController.getAllProductsByName);
-router.get('/getall/filter', ProductController.getAllProductsByFilter);
+router.post('/getall/productname', ProductController.getAllProductsByName);
+router.post('/getall/filter', ProductController.getAllProductsByFilter);
 
 router.get('/search/:key', ProductController.searchProduct);
 router.get('/getone/:id([0-9]+)', ProductController.getOne);
