@@ -23,7 +23,7 @@ class Basket {
 
   async append(req, res, next) {
     try {
-      const { productId, quantity } = req.params;
+      const { productId, quantity, productSize } = req.params;
       let basketId;
 
       if (!req.signedCookies.basketId) {
@@ -33,7 +33,12 @@ class Basket {
         basketId = parseInt(req.signedCookies.basketId);
       }
 
-      const basket = await BasketModel.append(basketId, productId, quantity);
+      const basket = await BasketModel.append(
+        basketId,
+        productId,
+        quantity,
+        productSize
+      );
       res.cookie('basketId', basket.id, { maxAge, signed });
       res.json(basket);
     } catch (e) {
@@ -50,8 +55,13 @@ class Basket {
       } else {
         basketId = parseInt(req.signedCookies.basketId);
       }
-      const { productId, quantity } = req.params;
-      const basket = await BasketModel.increment(basketId, productId, quantity);
+      const { productId, productSize, quantity } = req.params;
+      const basket = await BasketModel.increment(
+        basketId,
+        productId,
+        productSize,
+        quantity
+      );
       res.cookie('basketId', basket.id, { maxAge, signed });
       res.json(basket);
     } catch (e) {
@@ -68,8 +78,13 @@ class Basket {
       } else {
         basketId = parseInt(req.signedCookies.basketId);
       }
-      const { productId, quantity } = req.params;
-      const basket = await BasketModel.decrement(basketId, productId, quantity);
+      const { productId, productSize, quantity } = req.params;
+      const basket = await BasketModel.decrement(
+        basketId,
+        productId,
+        productSize,
+        quantity
+      );
       res.cookie('basketId', basket.id, { maxAge, signed });
       res.json(basket);
     } catch (e) {
@@ -86,7 +101,11 @@ class Basket {
       } else {
         basketId = parseInt(req.signedCookies.basketId);
       }
-      const basket = await BasketModel.remove(basketId, req.params.productId);
+      const basket = await BasketModel.remove(
+        basketId,
+        req.params.productId,
+        req.params.productSize
+      );
       res.cookie('basketId', basket.id, { maxAge, signed });
       res.json(basket);
     } catch (e) {

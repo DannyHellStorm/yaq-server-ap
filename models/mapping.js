@@ -15,12 +15,18 @@ const User = sequelize.define('user', {
 // модель «Корзина», таблица БД «baskets»
 const Basket = sequelize.define('basket', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  amount: { type: DataTypes.INTEGER },
 });
 
 // связь между корзиной и товаром через промежуточную таблицу «basket_products»
 // у этой таблицы будет составной первичный ключ (basket_id + product_id)
 const BasketProduct = sequelize.define('basket_product', {
   quantity: { type: DataTypes.INTEGER, defaultValue: 1 },
+  totalPrice: { type: DataTypes.INTEGER },
+  productSize: { type: DataTypes.STRING, unique: true },
+  productName: { type: DataTypes.STRING },
+  productColor: { type: DataTypes.STRING },
+  productPrice: { type: DataTypes.INTEGER },
 });
 
 // модель «Товар», таблица БД «products»
@@ -38,6 +44,11 @@ const Product = sequelize.define('product', {
   inSale: { type: DataTypes.BOOLEAN },
   salePrice: { type: DataTypes.INTEGER },
 });
+
+Basket.hasMany(BasketProduct);
+BasketProduct.belongsTo(Basket);
+Product.hasMany(BasketProduct);
+BasketProduct.belongsTo(Product);
 
 // модель «Категория», таблица БД «categories»
 const Category = sequelize.define('category', {
@@ -200,14 +211,6 @@ Wishlist.hasMany(WishlistProduct);
 WishlistProduct.belongsTo(Wishlist);
 Product.hasMany(WishlistProduct);
 WishlistProduct.belongsTo(Product);
-
-Basket.belongsToMany(Product, { through: BasketProduct, onDelete: 'CASCADE' });
-Product.belongsToMany(Basket, { through: BasketProduct, onDelete: 'CASCADE' });
-
-Basket.hasMany(BasketProduct);
-BasketProduct.belongsTo(Basket);
-Product.hasMany(BasketProduct);
-BasketProduct.belongsTo(Product);
 
 Order.hasMany(OrderItem, { as: 'items', onDelete: 'CASCADE' });
 OrderItem.belongsTo(Order);
