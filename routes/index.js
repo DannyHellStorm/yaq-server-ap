@@ -11,6 +11,7 @@ import size from './size.js';
 import color from './color.js';
 import variation from './variation.js';
 import gender from './gender.js';
+import payment from './payment.js';
 
 const router = new express.Router();
 
@@ -25,5 +26,6 @@ router.use('/size', size);
 router.use('/color', color);
 router.use('/variation', variation);
 router.use('/gender', gender);
+router.use('/payment', payment);
 
 export default router;
