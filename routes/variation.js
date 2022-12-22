@@ -13,40 +13,40 @@ router.get(
 // variation
 router.post(
   '/create/variation',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   VariationController.createVariation
 );
 router.put(
   '/update/variation/:id([0-9]+)',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   VariationController.updateVariation
 );
 router.delete(
   'delete/variation/:id([0-9]+)',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   VariationController.deleteVariation
 );
 
 // option
 router.post(
   '/create/options',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   VariationController.createOptions
 );
 router.put(
   '/update/options/:id([0-9]+)',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   VariationController.updateOption
 );
 router.delete(
   '/delete/options/:id([0-9]+)',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   VariationController.deleteOption
 );
 

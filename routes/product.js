@@ -18,20 +18,20 @@ router.get('/search/:key', ProductController.searchProduct);
 router.get('/getone/:id([0-9]+)', ProductController.getOne);
 router.post(
   '/create',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   ProductController.create
 );
 router.put(
   '/update/:id([0-9]+)',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   ProductController.update
 );
 router.delete(
   '/delete/:id([0-9]+)',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   ProductController.delete
 );
 
@@ -46,20 +46,20 @@ router.get(
 );
 router.post(
   '/product/:productId([0-9]+)/property/create',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   ProductPropController.create
 );
 router.put(
   '/product/:productId([0-9]+)/property/update/:id([0-9]+)',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   ProductPropController.update
 );
 router.delete(
   '/product/:productId([0-9]+)/property/delete/:id([0-9]+)',
-  // authMiddleware,
-  // adminMiddleware,
+  authMiddleware,
+  adminMiddleware,
   ProductPropController.delete
 );
 
