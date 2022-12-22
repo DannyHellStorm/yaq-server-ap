@@ -13,6 +13,7 @@ router.post(
 );
 router.post('/getall/productname', ProductController.getAllProductsByName);
 router.post('/getall/filter', ProductController.getAllProductsByFilter);
+router.post('/getall/bigsale', ProductController.getAllProductsByBigSale);
 
 router.get('/search/:key', ProductController.searchProduct);
 router.get('/getone/:id([0-9]+)', ProductController.getOne);
