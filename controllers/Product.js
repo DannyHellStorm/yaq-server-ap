@@ -43,6 +43,15 @@ class Product {
     }
   }
 
+  async getAllProductsByBigSale(req, res, next) {
+    try {
+      const products = await ProductModel.getProductsByBigSale(req.body);
+      res.json(products);
+    } catch (e) {
+      next(AppError.badRequest(e.message));
+    }
+  }
+
   async getAllProductsByName(req, res, next) {
     try {
       const products = await ProductModel.getProductsByName(
