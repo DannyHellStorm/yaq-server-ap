@@ -41,6 +41,9 @@ class Product {
     if (price) {
       where.price = { [op.between]: price };
     }
+    if (sortBySale) {
+      where.inSale = { [op.ne]: null };
+    }
 
     if (sortByMaxPrice === false) {
       const products = await ProductMapping.findAll({
