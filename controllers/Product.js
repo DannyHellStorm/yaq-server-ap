@@ -45,7 +45,7 @@ class Product {
 
   async getAllProductsByBigSale(req, res, next) {
     try {
-      const products = await ProductModel.getProductsByBigSale(req.body);
+      const products = await ProductModel.getProductsByBigSale();
       res.json(products);
     } catch (e) {
       next(AppError.badRequest(e.message));
