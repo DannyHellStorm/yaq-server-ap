@@ -219,59 +219,30 @@ class Product {
     return products;
   }
 
-  async getProductsByBigSale(data) {
-    const { categoryId, bigSale } = data;
+  async getProductsByBigSale() {
+    const products = await ProductMapping.findAll({
+      limit: 10,
+      where: {
+        inSale: {
+          [op.ne]: null,
+        },
+      },
+      include: [
+        {
+          model: ProductVariationsMapping,
+          include: [
+            {
+              model: ProductVarOptionsMapping,
+            },
+          ],
+        },
+        { model: SubCategoryMapping },
+        { model: CategoryMapping },
+      ],
+      order: [['inSale', 'DESC']],
+    });
 
-    let where = {};
-
-    if (categoryId) {
-      where.categoryId = categoryId;
-    }
-
-    if (bigSale) {
-      where.inSale = { [op.ne]: null };
-    }
-
-    if (bigSale === true) {
-      const products = await ProductMapping.findAll({
-        limit: 10,
-        where,
-        include: [
-          {
-            model: ProductVariationsMapping,
-            include: [
-              {
-                model: ProductVarOptionsMapping,
-              },
-            ],
-          },
-          { model: SubCategoryMapping },
-          { model: CategoryMapping },
-        ],
-        order: [['inSale', 'DESC']],
-      });
-
-      return products;
-    } else {
-      const products = await ProductMapping.findAll({
-        limit: 10,
-        where,
-        include: [
-          {
-            model: ProductVariationsMapping,
-            include: [
-              {
-                model: ProductVarOptionsMapping,
-              },
-            ],
-          },
-          { model: SubCategoryMapping },
-          { model: CategoryMapping },
-        ],
-      });
-
-      return products;
-    }
+    return products;
   }
 
   async getProductsByName(productName) {
